@@ -1,9 +1,8 @@
 const mqtt = require('mqtt');
 
-var Accessory, Service, Characteristic;
+var Service, Characteristic;
 
 module.exports = function(homebridge) {
-  Accessory = hombridge.platformAccessory;
   Characteristic = homebridge.hap.Characteristic;
   Service = homebridge.hap.Service;
 
