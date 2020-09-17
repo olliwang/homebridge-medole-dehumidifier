@@ -1,10 +1,9 @@
 {
   "name": "homebridge-medole-dehumidifier",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Medole dehumidifier plugin for homebridge",
   "keywords": [
-    "homebridge-plugin",
-    "medole"
+    "homebridge-plugin"
   ],
   "author": "Olli Wang",
   "repository": {
