@@ -148,6 +148,25 @@ MedoleDehumidifier.prototype = {
     });
 
     activeCharacteristic
+        .on('get', function(callback) {
+          if (this.debug) {
+            console.log('[MedoleDehumidifier][DEBUG] - Get Active: ' + this.isActive);
+          }
+
+          if (this.isActive == undefined) {
+            callback(new Error("Medole MQTT Server Not Yet Connected"))
+          }
+
+          if (this.isActive) {
+            currentHumidifierDehumidifierStateCharacteristic.updateValue(
+                Characteristic.CurrentHumidifierDehumidifierState
+                    .DEHUMIDIFYING);
+          } else {
+            currentHumidifierDehumidifierStateCharacteristic.updateValue(
+                Characteristic.CurrentHumidifierDehumidifierState.INACTIVE);
+          }
+          callback(null, this.isActive);
+        })
         .on('set', function(value, callback) {
           if (!this.connectedMqtt) {
             callback(new Error("Medole MQTT Server Not Yet Connected."));
@@ -170,16 +189,6 @@ MedoleDehumidifier.prototype = {
         .on('get', function(callback) {
           if (this.debug) {
             console.log('[MedoleDehumidifier][DEBUG] - Get RelativeHumidityDehumidifierThreshold: ' + this.targetHumidity);
-          }
-          if (this.isActive) {
-            activeCharacteristic.updateValue(Characteristic.Active.ACTIVE);
-            currentHumidifierDehumidifierStateCharacteristic.updateValue(
-                Characteristic.CurrentHumidifierDehumidifierState
-                    .DEHUMIDIFYING);
-          } else {
-            activeCharacteristic.updateValue(Characteristic.Active.INACTIVE);
-            currentHumidifierDehumidifierStateCharacteristic.updateValue(
-                Characteristic.CurrentHumidifierDehumidifierState.INACTIVE);
           }
           currentHumidityCharacteristic.updateValue(this.currentHumidity);
           callback(null, this.targetHumidity);
