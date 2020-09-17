@@ -59,7 +59,7 @@ function MedoleDehumidifier(log, config) {
 
   this.mqttClient.on('connect', function() {
     this.connectedMqtt = true;
-    console.log('Connected MedoleDehumidifier MQTT server.');
+    console.log('[MedoleDehumidifier] Connected to MedoleDehumidifier MQTT server.');
 
     this.mqttClient.subscribe(RAW_TOPIC, function() {
       this.mqttClient.on('message', function(topic, message, packet) {
@@ -182,7 +182,7 @@ MedoleDehumidifier.prototype = {
           }
           currentHumidityCharacteristic.updateValue(this.currentHumidity);
           rotationSpeedCharacteristic.updateValue(this.fanSpeed);
-          callback(null);
+          callback(null, this.currentHumidity);
         }.bind(this))
         .on('set', function(value, callback) {
           if (this.debug) {
@@ -243,12 +243,12 @@ MedoleDehumidifier.prototype = {
             .getCharacteristic(Characteristic.CurrentTemperature)
             .on('get', function(callback) {
               if (this.debug) {
-                console.log('[MedoleDehumidifier][DEBUG] - Get CurrentTemperature');
+                console.log('[MedoleDehumidifier][DEBUG] - Get CurrentTemperature: ' + this.currentTemperature);
               }
               if (this.currentTemperature == undefined) {
                 callback(new Error("Medole MQTT Server Not Yet Connected"))
               } else {
-                callback(this.currentTemperature);
+                callback(null, this.currentTemperature);
               }
             }.bind(this));
         services.push(temperatureSensorService);
