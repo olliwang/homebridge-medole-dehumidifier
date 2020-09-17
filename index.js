@@ -38,8 +38,8 @@ function MedoleDehumidifier(log, config) {
   }
 
   const TOPIC_PREFIX = 'MEDOLE/MEDOLE/' + this.token + '/';
-  const RAW_TOPIC = TOPIC_PREFIX + 'raw';
-  const REQ_TOPIC = TOPIC_PREFIX + 'req';
+  this.RAW_TOPIC = TOPIC_PREFIX + 'raw';
+  this.REQ_TOPIC = TOPIC_PREFIX + 'req';
 
   this.connectedMqtt = false;
   this.currentHumidity = undefined;
@@ -61,7 +61,7 @@ function MedoleDehumidifier(log, config) {
     this.connectedMqtt = true;
     console.log('[MedoleDehumidifier] Connected to MedoleDehumidifier MQTT server.');
 
-    this.mqttClient.subscribe(RAW_TOPIC, function() {
+    this.mqttClient.subscribe(this.RAW_TOPIC, function() {
       this.mqttClient.on('message', function(topic, message, packet) {
         var json;
         try {
@@ -152,7 +152,7 @@ MedoleDehumidifier.prototype = {
             callback(new Error("Medole MQTT Server Not Yet Connected."));
             return;
           }
-          this.mqttClient.publish(REQ_TOPIC,
+          this.mqttClient.publish(this.REQ_TOPIC,
                                   [value ? '5501810100d4' : '5501810000d5'],
                                   function() {
             callback(null);
@@ -192,7 +192,7 @@ MedoleDehumidifier.prototype = {
             callback(new Error("Mqtt Not Connected."));
             return;
           }
-          this.mqttClient.publish(REQ_TOPIC, getHumidityCode(value),
+          this.mqttClient.publish(this.REQ_TOPIC, getHumidityCode(value),
                                   function() {
             callback(null);
           });
@@ -229,7 +229,7 @@ MedoleDehumidifier.prototype = {
                 code = '5501850300d2';
                 break;
             }
-            this.mqttClient.publish(REQ_TOPIC, code, function() {
+            this.mqttClient.publish(this.REQ_TOPIC, code, function() {
                 callback(null);
             });
           }.bind(this));
