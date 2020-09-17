@@ -25,6 +25,7 @@ function MedoleDehumidifier(log, config) {
   this.token = config.token;
   this.name = config.name || 'Medole Dehumidifier';
   this.displayName = config.name;
+  this.showsHumidity = boolValueWithDefault(config.showsHumidity, false);
   this.showsTemperature = boolValueWithDefault(config.showsTemperature, false);
 
   this.services = [];
@@ -235,6 +236,24 @@ MedoleDehumidifier.prototype = {
           }.bind(this));
 
       services.push(dehumidifierService);
+
+      if (this.showsHumidity) {
+        var humiditySensorService = new Service.HumiditySensor(
+            "Medole Humidity Sensor");
+        humiditySensorService
+            .getCharacteristic(Characteristic.CurrentRelativeHumidity)
+            .on('get', function(callback) {
+              if (this.debug) {
+                console.log('[MedoleDehumidifier][DEBUG] - Get CurrentHumidity: ' + this.currentHumidity);
+              }
+              if (this.currentHumidity == undefined) {
+                callback(new Error("Medole MQTT Server Not Yet Connected"))
+              } else {
+                callback(null, this.currentHumidity);
+              }
+            }.bind(this));
+        services.push(humiditySensorService);
+      }
 
       if (this.showsTemperature) {
         var temperatureSensorService = new Service.TemperatureSensor(
