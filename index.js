@@ -169,6 +169,7 @@ MedoleDehumidifier.prototype = {
         }.bind(this))
         .on('set', function(value, callback) {
           var getHumidityCode = function(humidity) {
+            humidity = parseInt(humidity)
             if (this.debug) {
               console.log('[MedoleDehumidifier][DEBUG] - getHumidityCode: Humidity(' + humidity + '), MIN(' + this.minHumidityValue + '), MAX(' + this.maxHumidityValue + ')');
             }
@@ -198,15 +199,15 @@ MedoleDehumidifier.prototype = {
             return code;
           }
 
+          var code = getHumidityCode(value);
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + getHumidityCode(value) + ')');
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + code + ')');
           }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
             return;
           }
-          this.mqttClient.publish(this.REQ_TOPIC, getHumidityCode(value),
-                                  function() {
+          this.mqttClient.publish(this.REQ_TOPIC, code, function() {
             callback(null);
           });
         }.bind(this));
