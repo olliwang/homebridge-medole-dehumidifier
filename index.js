@@ -39,7 +39,7 @@ function MedoleDehumidifier(log, config) {
   }
 
   const TOPIC_PREFIX = 'MEDOLE/MEDOLE/' + this.token + '/';
-  this.RAW_TOPIC = TOPIC_PREFIX + 'raw';
+  const RAW_TOPIC = TOPIC_PREFIX + 'raw';
   this.REQ_TOPIC = TOPIC_PREFIX + 'req';
 
   this.connectedMqtt = false;
@@ -48,9 +48,6 @@ function MedoleDehumidifier(log, config) {
   this.fanSpeed = undefined;
   this.isActive = undefined;
   this.targetHumidity = undefined;
-
-  this.minHumidityValue = 0;
-  this.maxHumidityValue = 100;
 
   this.mqttClient = mqtt.connect('mqtt://54.178.141.153', {
     port: 1883,
@@ -62,7 +59,7 @@ function MedoleDehumidifier(log, config) {
     this.connectedMqtt = true;
     console.log('[MedoleDehumidifier] Connected to MedoleDehumidifier MQTT server.');
 
-    this.mqttClient.subscribe(this.RAW_TOPIC, function() {
+    this.mqttClient.subscribe(RAW_TOPIC, function() {
       this.mqttClient.on('message', function(topic, message, packet) {
         var json;
         try {
@@ -82,6 +79,34 @@ function MedoleDehumidifier(log, config) {
 }
 
 MedoleDehumidifier.prototype = {
+  getHumidityCode: function(humidity) {
+    const MIN_VALUE = 30;
+    const MAX_VALUE = 90;
+
+    if (humidity < MIN_VALUE) {
+      humidity = MIN_VALUE;
+    } else if (humidity > MAX_VALUE) {
+      humidity = MAX_VALUE;
+    }
+
+    var diff = humidity - MIN_VALUE;
+    var code = '550184';
+    code += (0x1e + diff).toString(16);
+    code += '00';
+
+    const RANGES = [[32, 47, 0xf0], [64, 79, 0x90], [80, 90, 0x80],
+                    [MIN_VALUE, MAX_VALUE, 0xce]];
+    for (let range of RANGES) {
+      var start = range[2];
+      if (humidity >= range[0] && humidity <= range[1]) {
+        diff = humidity - range[0];
+        break;
+      }
+    }
+    code += (start + diff).toString(16);
+    return code;
+  },
+
   getServices: function() {
     var services = [];
 
@@ -155,11 +180,6 @@ MedoleDehumidifier.prototype = {
 
     dehumidifierService
         .getCharacteristic(Characteristic.RelativeHumidityDehumidifierThreshold)
-        .setProps({
-          minValue: this.minHumidityValue,
-          maxValue: this.maxHumidityValue,
-          minStep: 1,
-        })
         .on('get', function(callback) {
           if (this.debug) {
             console.log('[MedoleDehumidifier][DEBUG] - Get RelativeHumidityDehumidifierThreshold: ' + this.targetHumidity);
@@ -168,50 +188,15 @@ MedoleDehumidifier.prototype = {
           callback(null, this.targetHumidity);
         }.bind(this))
         .on('set', function(value, callback) {
-          var getHumidityCode = function(humidity) {
-            const MIN_VALUE = 30;
-            const MAX_VALUE = 90;
-
-            if (humidity < MIN_VALUE) {
-              humidity = MIN_VALUE;
-            } else if (humidity > MAX_VALUE) {
-              humidity = MAX_VALUE;
-            }
-
-            var diff = humidity - MIN_VALUE;
-            var code = '550184';
-            console.log('humidity: ' + humidity);
-            console.log('minHumidityValue: ' + MIN_VALUE);
-            console.log('diff: ' + diff);
-            console.log('A: ' + (0x1e + diff));
-            code += (0x1e + diff).toString(16);
-            code += '00';
-
-            const ranges = [[32, 47, 0xf0], [64, 79, 0x90], [80, 90, 0x80],
-                            [MIN_VALUE, MAX_VALUE, 0xce]];
-
-            for (let range of ranges) {
-              var start = range[2];
-
-              if (humidity >= range[0] && humidity <= range[1]) {
-                diff = humidity - range[0];
-                break;
-              }
-            }
-            console.log('B: ' + (start + diff));
-            code += (start + diff).toString(16);
-            return code;
-          }
-
-          var code = getHumidityCode(value);
+          const CODE = this.getHumidityCode(value);
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + code + ')');
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + CODE + ')');
           }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
             return;
           }
-          this.mqttClient.publish(this.REQ_TOPIC, code, function() {
+          this.mqttClient.publish(this.REQ_TOPIC, CODE, function() {
             callback(null);
           });
         }.bind(this));
