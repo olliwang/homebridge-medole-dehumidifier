@@ -83,6 +83,9 @@ function MedoleDehumidifier(log, config) {
 
 MedoleDehumidifier.prototype = {
   getHumidityCode: function(humidity) {
+    if (this.debug) {
+      console.log('[MedoleDehumidifier][DEBUG] - getHumidityCode: Humidity(' + humidity + '), MIN(' + this.minHumidityValue + '), MAX(' + this.maxHumidityValue + ')');
+    }
     if (humidity < this.minHumidityValue) {
       humidity = this.minHumidityValue;
     } else if (humidity > this.maxHumidityValue) {
