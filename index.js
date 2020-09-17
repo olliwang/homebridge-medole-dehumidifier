@@ -178,9 +178,17 @@ MedoleDehumidifier.prototype = {
           }
           currentHumidityCharacteristic.updateValue(this.currentHumidity);
           rotationSpeedCharacteristic.updateValue(this.fanSpeed);
+          callback(null);
         }.bind(this))
         .on('set', function(value, callback) {
-
+          if (!this.connectedMqtt) {
+            callback(new Error("Mqtt Not Connected."));
+            return;
+          }
+          this.mqttClient.publish(REQ_TOPIC, getHumidityCode(value),
+                                  function() {
+            callback(null);
+          });
         }.bind(this));
 
       rotationSpeedCharacteristic
