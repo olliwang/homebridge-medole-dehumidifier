@@ -155,6 +155,7 @@ MedoleDehumidifier.prototype = {
 
           if (this.isActive == undefined) {
             callback(new Error("Medole MQTT Server Not Yet Connected"))
+            return;
           }
 
           if (this.isActive) {
@@ -166,7 +167,7 @@ MedoleDehumidifier.prototype = {
                 Characteristic.CurrentHumidifierDehumidifierState.INACTIVE);
           }
           callback(null, this.isActive);
-        })
+        }.bind(this))
         .on('set', function(value, callback) {
           if (!this.connectedMqtt) {
             callback(new Error("Medole MQTT Server Not Yet Connected."));
