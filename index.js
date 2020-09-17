@@ -169,25 +169,26 @@ MedoleDehumidifier.prototype = {
         }.bind(this))
         .on('set', function(value, callback) {
           var getHumidityCode = function(humidity) {
-            console.log('[MedoleDehumidifier][DEBUG] - getHumidityCode: Humidity(' + humidity + '), MIN(' + this.minHumidityValue + '), MAX(' + this.maxHumidityValue + ')');
-            if (humidity < this.minHumidityValue) {
-              humidity = this.minHumidityValue;
-            } else if (humidity > this.maxHumidityValue) {
-              humidity = this.maxHumidityValue;
+            const MIN_VALUE = 30;
+            const MAX_VALUE = 90;
+
+            if (humidity < MIN_VALUE) {
+              humidity = MIN_VALUE;
+            } else if (humidity > MAX_VALUE) {
+              humidity = MAX_VALUE;
             }
 
-            var diff = humidity - this.minHumidityValue;
+            var diff = humidity - MIN_VALUE;
             var code = '550184';
             console.log('humidity: ' + humidity);
-            console.log('minHumidityValue: ' + this.minHumidityValue);
+            console.log('minHumidityValue: ' + MIN_VALUE);
             console.log('diff: ' + diff);
             console.log('A: ' + (0x1e + diff));
             code += (0x1e + diff).toString(16);
             code += '00';
 
-            const ranges = [
-                [32, 47, 0xf0], [64, 79, 0x90], [80, 90, 0x80],
-                [this.minHumidityValue, this.maxHumidityValue, 0xce]];
+            const ranges = [[32, 47, 0xf0], [64, 79, 0x90], [80, 90, 0x80],
+                            [MIN_VALUE, MAX_VALUE, 0xce]];
 
             for (let range of ranges) {
               var start = range[2];
