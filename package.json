@@ -1,6 +1,6 @@
 {
   "name": "homebridge-medole-dehumidifier",
-  "version": "0.1",
+  "version": "0.1.0",
   "description": "Medole dehumidifier plugin for homebridge",
   "keywords": [
     "homebridge-plugin",
