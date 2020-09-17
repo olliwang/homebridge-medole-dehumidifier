@@ -219,7 +219,7 @@ MedoleDehumidifier.prototype = {
         var temperatureSensorService = new Service.TemperatureSensor(
             "Medole Temperature Sensor");
         temperatureSensorService
-            .getCharacteristic(Characteristic.currentTemperature)
+            .getCharacteristic(Characteristic.CurrentTemperature)
             .on('get', function(callback) {
               if (this.currentTemperature == undefined) {
                 callback(new Error("Medole MQTT Server Not Yet Connected"))
