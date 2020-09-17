@@ -74,9 +74,9 @@ function MedoleDehumidifier(log, config) {
           this.isActive = json['POWER'][0];
           this.targetHumidity = json['HUMIDITY'];
         }
-      });
-    });
-  });
+      }.bind(this));
+    }.bind(this));
+  }.bind(this));
 }
 
 MedoleDehumidifier.prototype = {
