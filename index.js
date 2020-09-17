@@ -20,6 +20,7 @@ function MedoleDehumidifier(log, config) {
     }
   }
 
+  this.debug = boolValueWithDefault(config.debug, false);
   this.password = config.password;
   this.token = config.token;
   this.name = config.name || 'Medole Dehumidifier';
@@ -166,6 +167,9 @@ MedoleDehumidifier.prototype = {
           minStep: 1,
         })
         .on('get', function(callback) {
+          if (this.debug) {
+            console.log('[MedoleDehumidifier][DEBUG] - Get RelativeHumidityDehumidifierThreshold');
+          }
           if (this.isActive) {
             activeCharacteristic.updateValue(Characteristic.Active.ACTIVE);
             currentHumidifierDehumidifierStateCharacteristic.updateValue(
@@ -181,6 +185,9 @@ MedoleDehumidifier.prototype = {
           callback(null);
         }.bind(this))
         .on('set', function(value, callback) {
+          if (this.debug) {
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold');
+          }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
             return;
@@ -193,6 +200,9 @@ MedoleDehumidifier.prototype = {
 
       rotationSpeedCharacteristic
           .on('get', function(callback) {
+            if (this.debug) {
+              console.log('[MedoleDehumidifier][DEBUG] - Get RotationSpeed');
+            }
             if (this.fanSpeed == undefined) {
               callback(new Error("Medole MQTT Server Not Yet Connected."));
             } else {
@@ -200,6 +210,9 @@ MedoleDehumidifier.prototype = {
             }
           }.bind(this))
           .on('set', function(value, callback) {
+            if (this.debug) {
+              console.log('[MedoleDehumidifier][DEBUG] - Set RotationSpeed');
+            }
             if (!this.connectedMqtt) {
               callback(new Error("Mqtt Not Connected."));
               return;
@@ -229,6 +242,9 @@ MedoleDehumidifier.prototype = {
         temperatureSensorService
             .getCharacteristic(Characteristic.CurrentTemperature)
             .on('get', function(callback) {
+              if (this.debug) {
+                console.log('[MedoleDehumidifier][DEBUG] - Get CurrentTemperature');
+              }
               if (this.currentTemperature == undefined) {
                 callback(new Error("Medole MQTT Server Not Yet Connected"))
               } else {
