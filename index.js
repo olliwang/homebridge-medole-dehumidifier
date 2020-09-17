@@ -127,14 +127,14 @@ MedoleDehumidifier.prototype = {
         dehumidifierService.getCharacteristic(
             Characteristic.CurrentHumidifierDehumidifierState);
 
-    var targetHumidifierDehumidifierStateCharacteristic =
-        dehumidifierService.getCharacteristic(
-            Characteristic.TargetHumidifierDehumidifierState);
-    targetHumidifierDehumidifierStateCharacteristic.setProps({
-      validValues: [2]
-    });
-    targetHumidifierDehumidifierStateCharacteristic.setValue(
-      Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER);
+    dehumidifierService
+        .getCharacteristic(Characteristic.TargetHumidifierDehumidifierState)
+        .setProps({
+          validValues: [2]
+        })
+        .setValue(
+          Characteristic.TargetHumidifierDehumidifierState.DEHUMIDIFIER
+        );
 
     var activeCharacteristic =
         dehumidifierService.getCharacteristic(Characteristic.Active);
@@ -182,12 +182,11 @@ MedoleDehumidifier.prototype = {
                 Characteristic.CurrentHumidifierDehumidifierState.INACTIVE);
           }
           currentHumidityCharacteristic.updateValue(this.currentHumidity);
-          rotationSpeedCharacteristic.updateValue(this.fanSpeed);
           callback(null, this.targetHumidity);
         }.bind(this))
         .on('set', function(value, callback) {
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value);
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + this.getHumidityCode(value) + ')');
           }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
