@@ -153,7 +153,7 @@ MedoleDehumidifier.prototype = {
             return;
           }
           this.mqttClient.publish(this.REQ_TOPIC,
-                                  [value ? '5501810100d4' : '5501810000d5'],
+                                  value ? '5501810100d4' : '5501810000d5',
                                   function() {
             callback(null);
           });
@@ -168,7 +168,7 @@ MedoleDehumidifier.prototype = {
         })
         .on('get', function(callback) {
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Get RelativeHumidityDehumidifierThreshold');
+            console.log('[MedoleDehumidifier][DEBUG] - Get RelativeHumidityDehumidifierThreshold: ' + this.targetHumidity);
           }
           if (this.isActive) {
             activeCharacteristic.updateValue(Characteristic.Active.ACTIVE);
@@ -182,11 +182,11 @@ MedoleDehumidifier.prototype = {
           }
           currentHumidityCharacteristic.updateValue(this.currentHumidity);
           rotationSpeedCharacteristic.updateValue(this.fanSpeed);
-          callback(null, this.currentHumidity);
+          callback(null, this.targetHumidity);
         }.bind(this))
         .on('set', function(value, callback) {
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold');
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value);
           }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
@@ -201,7 +201,7 @@ MedoleDehumidifier.prototype = {
       rotationSpeedCharacteristic
           .on('get', function(callback) {
             if (this.debug) {
-              console.log('[MedoleDehumidifier][DEBUG] - Get RotationSpeed');
+              console.log('[MedoleDehumidifier][DEBUG] - Get RotationSpeed: ' + this.fanSpeed);
             }
             if (this.fanSpeed == undefined) {
               callback(new Error("Medole MQTT Server Not Yet Connected."));
@@ -211,7 +211,7 @@ MedoleDehumidifier.prototype = {
           }.bind(this))
           .on('set', function(value, callback) {
             if (this.debug) {
-              console.log('[MedoleDehumidifier][DEBUG] - Set RotationSpeed');
+              console.log('[MedoleDehumidifier][DEBUG] - Set RotationSpeed: ' + value);
             }
             if (!this.connectedMqtt) {
               callback(new Error("Mqtt Not Connected."));
