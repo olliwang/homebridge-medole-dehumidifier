@@ -106,7 +106,7 @@ MedoleDehumidifier.prototype = {
     }
     code += (start + diff).toString(16);
     return code;
-  },
+  }.bind(this),
 
   getServices: function() {
     var services = [];
@@ -192,7 +192,7 @@ MedoleDehumidifier.prototype = {
             callback(new Error("Mqtt Not Connected."));
             return;
           }
-          this.mqttClient.publish(this.REQ_TOPIC, getHumidityCode(value),
+          this.mqttClient.publish(this.REQ_TOPIC, this.getHumidityCode(value),
                                   function() {
             callback(null);
           });
