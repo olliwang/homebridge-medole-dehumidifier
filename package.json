@@ -19,6 +19,6 @@
     "homebridge": ">=0.3.1"
   },
   "dependencies": {
-    "mqtt": ">=4.2.1"
+    "mqtt": "^4.2.1"
   }
 }

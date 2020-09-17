@@ -77,15 +77,11 @@ function MedoleDehumidifier(log, config) {
         }
       });
     });
-
-    this.mqttClient.publish(REQ_TOPIC, get_humidity_code(60), function() {
-      console.log("PUBLISHED");
-    });
   });
 }
 
-Medole.prototype = {
-  getHumidityCode = function(humidity) {
+MedoleDehumidifier.prototype = {
+  getHumidityCode: function(humidity) {
     if (humidity < this.minHumidityValue) {
       humidity = this.minHumidityValue;
     } else if (humidity > this.maxHumidityValue) {
