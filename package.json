@@ -1,0 +1,24 @@
+{
+  "name": "homebridge-medole-dehumidifier",
+  "version": "0.1",
+  "description": "Medole dehumidifier plugin for homebridge",
+  "keywords": [
+    "homebridge-plugin",
+    "medole"
+  ],
+  "author": "Olli Wang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/olliwang/homebridge-medole-dehumidifier"
+  },
+  "bugs": {
+    "url": "https://github.com/olliwang/homebridge-medole-dehumidifier/issues"
+  },
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.3.1"
+  },
+  "dependencies": {
+    "mqtt": ">=4.2.1"
+  }
+}
