@@ -199,13 +199,13 @@ MedoleDehumidifier.prototype = {
           }
 
           if (this.debug) {
-            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + this.getHumidityCode(value) + ')');
+            console.log('[MedoleDehumidifier][DEBUG] - Set RelativeHumidityDehumidifierThreshold: ' + value + ' (' + getHumidityCode(value) + ')');
           }
           if (!this.connectedMqtt) {
             callback(new Error("Mqtt Not Connected."));
             return;
           }
-          this.mqttClient.publish(this.REQ_TOPIC, this.getHumidityCode(value),
+          this.mqttClient.publish(this.REQ_TOPIC, getHumidityCode(value),
                                   function() {
             callback(null);
           });
