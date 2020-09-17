@@ -142,7 +142,7 @@ MedoleDehumidifier.prototype = {
     var rotationSpeedCharacteristic =
         dehumidifierService.getCharacteristic(Characteristic.RotationSpeed);
     rotationSpeedCharacteristic.setProps({
-      minValue: 0,
+      minValue: 1,
       maxValue: 3,
       minStep: 1,
     });
@@ -218,6 +218,7 @@ MedoleDehumidifier.prototype = {
               callback(new Error("Mqtt Not Connected."));
               return;
             }
+
             var code;
             switch (value) {
               case 1:
