@@ -49,8 +49,8 @@ function MedoleDehumidifier(log, config) {
   this.isActive = undefined;
   this.targetHumidity = undefined;
 
-  this.minHumidityValue = 30;
-  this.maxHumidityValue = 90;
+  this.minHumidityValue = 0;
+  this.maxHumidityValue = 100;
 
   this.mqttClient = mqtt.connect('mqtt://54.178.141.153', {
     port: 1883,
@@ -178,6 +178,9 @@ MedoleDehumidifier.prototype = {
 
             var diff = humidity - this.minHumidityValue;
             var code = '550184';
+            console.log('humidity: ' + humidity);
+            console.log('minHumidityValue: ' + this.minHumidityValue);
+            console.log('diff: ' + diff);
             console.log('A: ' + (0x1e + diff));
             code += (0x1e + diff).toString(16);
             code += '00';
