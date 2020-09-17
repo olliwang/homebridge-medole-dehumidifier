@@ -226,7 +226,7 @@ MedoleDehumidifier.prototype = {
               } else {
                 callback(this.currentTemperature);
               }
-            });
+            }.bind(this));
         services.push(temperatureSensorService);
       }
 
